@@ -100,7 +100,7 @@ public class Directorio {
     
     public Archivo borrarYDevolverArchivo(Archivo arch) {
         Archivo ret = null;
-        if(contieneArchivo(nombreArchivo)) {
+        if(contieneArchivo(arch)) {
             for (int i = 0; i < this.listaArchivos.size(); i++) {
                 Archivo aux = this.listaArchivos.get(i);
                 if(aux.equals(arch)) {
