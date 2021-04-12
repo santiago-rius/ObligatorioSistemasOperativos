@@ -10,4 +10,8 @@
  */
 public class UsuarioAdmin extends Usuario {
     
+    public UsuarioAdmin(String unNombre) {
+        super(unNombre);
+    }
+    
 }

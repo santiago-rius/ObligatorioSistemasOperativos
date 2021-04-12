@@ -10,4 +10,7 @@
  */
 public class UsuarioEstandar extends Usuario{
     
+    public UsuarioEstandar(String unNombre) {
+        super(unNombre);
+    }
 }
