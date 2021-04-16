@@ -15,13 +15,13 @@ import java.util.List;
  */
 public class Nodo<T> {
     private T dato;
-    private Nodo<T> padre;
-    private List<Nodo<T>> hijos;
+    private Nodo<T> sH;
+    private Nodo<T> pH;
 
-    public Nodo(T dato, Nodo<T> padre) {
+    public Nodo(T dato, Nodo<T> pH, Nodo<T> sH) {
         this.dato = dato;
-        this.padre = padre;
-        this.hijos = new ArrayList<>();
+        this.pH = pH;
+        this.sH = sH;
     }
 
     public T getDato() {
@@ -32,19 +32,21 @@ public class Nodo<T> {
         this.dato = dato;
     }
 
-    public Nodo<T> getPadre() {
-        return padre;
+    public Nodo<T> getsH() {
+        return sH;
     }
 
-    public void setPadre(Nodo<T> padre) {
-        this.padre = padre;
+    public void setsH(Nodo<T> sH) {
+        this.sH = sH;
     }
 
-    public List<Nodo<T>> getHijos() {
-        return hijos;
+    public Nodo<T> getpH() {
+        return pH;
     }
 
-    public void setHijos(List<Nodo<T>> hijos) {
-        this.hijos = hijos;
+    public void setpH(Nodo<T> pH) {
+        this.pH = pH;
     }
+
+   
 }
