@@ -26,7 +26,7 @@ public abstract class Usuario {
         return this.nombre;
     }
 
-    void setContraseña(String unaContraseña) {
+    public void setContraseña(String unaContraseña) {
         this.contraseña = unaContraseña;
     }
 

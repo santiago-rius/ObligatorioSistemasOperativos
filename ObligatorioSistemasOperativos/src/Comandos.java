@@ -12,6 +12,7 @@ import java.util.Scanner;
  * @author Usuario
  */
 public class Comandos {
+    Sesion sesionActual;
 
     public void menu(String comandoInterfaz) {
         String[] comandos = dividirComponentes(comandoInterfaz);
@@ -131,7 +132,7 @@ public class Comandos {
 
     public void modificarContraseña(String nombreUsuario) {
         //crear lista de todos los usuarios
-        if (misUsuarios.contains(nombreUsuario)) { //aca busco en la supuesta lista de usuarios a ver si existe el pibito
+        if (sesionActual.misUsuarios.contains(nombreUsuario)) { //aca busco en la supuesta lista de usuarios a ver si existe el pibito
             System.out.print("Ingrese la nueva contraseña: ");
             Scanner contraseñaUsuario = new Scanner(System.in);
             String contraseña = contraseñaUsuario.nextLine();
@@ -141,7 +142,7 @@ public class Comandos {
             String contraseña2 = contraseñaUsuario2.nextLine();
 
             if (contraseña.equals(contraseña2)) {
-                nuevoUsuario.setContraseña = contraseña;
+                sesionActual.usuarioActual.setContraseña(contraseña);
             } else {
                 System.out.print("ERROR! Las contraseñas no coinciden");
             }
@@ -152,10 +153,10 @@ public class Comandos {
     }
 
     public void eliminarUsuario(String nombreUsuario) {
-        int indice = misUsuarios.indexOf(nombreUsuario);
+        int indice = sesionActual.misUsuarios.indexOf(nombreUsuario);
 
         if (indice != -1) { // aca borro al pibito de la lista
-            misUsuarios.remove(nombreUsuario);
+            sesionActual.misUsuarios.remove(nombreUsuario);
         } else {
             System.out.print("No hay registro de ese usuario");
         }
