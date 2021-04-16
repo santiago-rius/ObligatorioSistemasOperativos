@@ -6,19 +6,21 @@
 package FileSystem;
 
 import ClasesAuxiliares.Nodo;
+import java.util.Arrays;
 
 /**
  *
  * @author Santiago
  */
 public class Directorios {
+
     private Nodo<Directorio> raiz;
-    
+
     public Directorios() {
         raiz = new Nodo<>(new Directorio("/"), raiz);
     }
-    
-    public void AgregarDirectorio(String ruta) {
+
+    public void AgregarDirectorio(String ruta) { //Mkdir -- falta verificacion
         String rutaPadre = RutaPadre(ruta);
         String nombreDir = ObtenerNombre(ruta);
         Nodo<Directorio> directorioPadre = buscarDirectorio(raiz, rutaPadre);
@@ -34,18 +36,60 @@ public class Directorios {
     }
 
     private String RutaPadre(String ruta) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String[] aux = ruta.split("/");
+        String rutaPadre = reformarString(aux, 1, aux.length);
+        return rutaPadre;
+    }
+
+    private String reformarString(String[] lista, int comienzo, int fin) {
+        String ret = "";
+        if (comienzo < fin && comienzo < lista.length && fin < lista.length) {
+            String[] listaNueva = Arrays.copyOfRange(lista, comienzo, fin);
+            for (int i = 0; i < listaNueva.length - 1; i++) {
+                ret += listaNueva[i];
+            }
+        }
+        return ret;
     }
 
     private String ObtenerNombre(String ruta) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String[] aux = ruta.split("/");
+        int largo = aux.length;
+        String nombreDir = aux[largo];
+        return nombreDir;
     }
 
-    private Nodo<Directorio> buscarDirectorio(Nodo<Directorio> raiz, String rutaPadre) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private Nodo<Directorio> buscarDirectorio(Nodo<Directorio> raiz, String ruta, int primeraVez) {
+        if (raiz == null || ruta.equals("")) {
+            return null;
+        } else if (ruta.equals("/")) {
+            return this.raiz;
+        } else {
+            if (primeraVez == 1) {
+                return buscarDirectorio(raiz.getpH(), ruta, 0);
+            }
+            String[] listaRuta = ruta.split("/");
+            if (listaRuta[0].equals("/")) {
+                listaRuta = Arrays.copyOfRange(listaRuta, 1, listaRuta.length);
+            }
+            if (raiz.getDato().nombre.equals(listaRuta[0])) {
+                if (listaRuta.length == 1) {
+                    return raiz;
+                } else {
+                    listaRuta = Arrays.copyOfRange(listaRuta, 1, listaRuta.length);
+                    String rutaNueva = reformarString(listaRuta, 1, listaRuta.length);
+                    return buscarDirectorio(raiz.getpH(), rutaNueva, 0);
+                }
+            } else {
+                return buscarDirectorio(raiz.getsH(), ruta, 0);
+            }
+        }
     }
 
     private void AgregarHijo(Nodo<Directorio> directorioPadre, String nombreDir) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Directorio nuevoDir = new Directorio(nombreDir);
+        if (directorioPadre != null) {
+            //falta implementar
+        }
     }
 }
