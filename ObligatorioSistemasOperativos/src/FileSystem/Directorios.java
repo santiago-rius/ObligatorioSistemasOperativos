@@ -59,7 +59,7 @@ public class Directorios {
         return nombreDir;
     }
 
-    private Nodo<Directorio> buscarDirectorio(Nodo<Directorio> raiz, String ruta, int primeraVez) {
+    public Nodo<Directorio> buscarDirectorio(Nodo<Directorio> raiz, String ruta, int primeraVez) {
         if (raiz == null || ruta.equals("")) {
             return null;
         } else if (ruta.equals("/")) {
