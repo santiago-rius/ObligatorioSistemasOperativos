@@ -5,9 +5,6 @@
  */
 package ClasesAuxiliares;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  * @author Santiago
@@ -47,6 +44,4 @@ public class Nodo<T> {
     public void setpH(Nodo<T> pH) {
         this.pH = pH;
     }
-
-   
 }

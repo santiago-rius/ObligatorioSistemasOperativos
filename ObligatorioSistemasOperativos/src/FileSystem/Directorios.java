@@ -17,14 +17,15 @@ public class Directorios {
     private Nodo<Directorio> raiz;
 
     public Directorios() {
-        raiz = new Nodo<>(new Directorio("/"), raiz);
+        raiz = new Nodo<>(new Directorio("/"), null, null);
     }
 
-    public void AgregarDirectorio(String ruta) { //Mkdir -- falta verificacion
-        String rutaPadre = RutaPadre(ruta);
-        String nombreDir = ObtenerNombre(ruta);
-        Nodo<Directorio> directorioPadre = buscarDirectorio(raiz, rutaPadre);
-        AgregarHijo(directorioPadre, nombreDir);
+    public Nodo<Directorio> agregarDirectorio(String ruta) { //Mkdir -- falta verificacion
+        String rutaPadre = rutaPadre(ruta);
+        String nombreDir = obtenerNombre(ruta);
+        Nodo<Directorio> nodoPadre = buscarDirectorio(raiz, rutaPadre, 1);
+        nodoPadre = agregarHijo(nodoPadre, nombreDir);
+        return nodoPadre;
     }
 
     public Nodo<Directorio> getRaiz() {
@@ -35,9 +36,9 @@ public class Directorios {
         this.raiz = raiz;
     }
 
-    private String RutaPadre(String ruta) {
+    private String rutaPadre(String ruta) {
         String[] aux = ruta.split("/");
-        String rutaPadre = reformarString(aux, 1, aux.length);
+        String rutaPadre = reformarString(aux, 0, aux.length - 1);
         return rutaPadre;
     }
 
@@ -52,14 +53,14 @@ public class Directorios {
         return ret;
     }
 
-    private String ObtenerNombre(String ruta) {
+    private String obtenerNombre(String ruta) {
         String[] aux = ruta.split("/");
         int largo = aux.length;
         String nombreDir = aux[largo];
         return nombreDir;
     }
 
-    private Nodo<Directorio> buscarDirectorio(Nodo<Directorio> raiz, String ruta, int primeraVez) {
+    public Nodo<Directorio> buscarDirectorio(Nodo<Directorio> raiz, String ruta, int primeraVez) {
         if (raiz == null || ruta.equals("")) {
             return null;
         } else if (ruta.equals("/")) {
@@ -86,10 +87,44 @@ public class Directorios {
         }
     }
 
-    private void AgregarHijo(Nodo<Directorio> directorioPadre, String nombreDir) {
+    private Nodo<Directorio> agregarHijo(Nodo<Directorio> nodo, String nombreDir) {
         Directorio nuevoDir = new Directorio(nombreDir);
-        if (directorioPadre != null) {
-            //falta implementar
+        Nodo<Directorio> nuevoNodo = new Nodo<>(nuevoDir, null, null);
+        if (nodo != null) {
+            Nodo<Directorio> aux = nodo;
+            while (aux.getsH() != null) {
+                aux = aux.getsH();
+            }
+            aux.setsH(nuevoNodo);
+        } else {
+            nodo = nuevoNodo;
+        }
+        return nodo;
+    }
+
+    public void eliminarDirectorio(String ruta) {
+        String rutaPadre = rutaPadre(ruta);
+        Nodo<Directorio> padre = buscarDirectorio(raiz, ruta, 1);
+        String rutaNombre = obtenerNombre(ruta);
+        eliminarDirectorioAux(padre.getpH(), rutaNombre);
+    }
+
+    private void eliminarDirectorioAux(Nodo<Directorio> nodo, String nombreDirABorrar) {
+        if (nodo != null) {
+            if (nombreDirABorrar.equals("")) {
+                Nodo<Directorio> aBorrar = nodo;
+                eliminarDirectorioAux(nodo.getpH(), "");
+                eliminarDirectorioAux(nodo.getsH(), "");
+                nodo.getDato().listaArchivos.clear();
+                aBorrar = null;
+            } else {
+                if (nombreDirABorrar.equals(nodo.getDato().getNombre())) {
+                    Nodo<Directorio> aBorrar = nodo;
+                    nodo = nodo.getsH();
+                } else {
+                    
+                }
+            }
         }
     }
 }

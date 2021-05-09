@@ -14,6 +14,7 @@ public class Archivo {
     private String nombre;
     private String contenido;
     
+    
     public Archivo(String nombre) {
         this.nombre = nombre;
         this.contenido = "";
