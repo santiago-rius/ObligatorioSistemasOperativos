@@ -1,17 +1,11 @@
 
+import ClasesAuxiliares.Nodo;
 import FileSystem.Archivo;
+import FileSystem.Directorio;
 import java.util.Scanner;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-/**
- *
- * @author Usuario
- */
 public class Comandos {
+
     Sesion sesionActual;
 
     public void menu(String comandoInterfaz) {
@@ -40,6 +34,7 @@ public class Comandos {
             case "whoami":
                 /*whoami
                 Muestra el nombre de usuario autenticado(puede parecer irrelevante, ya que el prompt muestra el nombre de usuario, pero noaplica a todos los casos)*/
+                whoami();
                 break;
             case "pwd":
                 /*pwd
@@ -61,9 +56,9 @@ public class Comandos {
             case "echo":
                 /*echo​ "Texto al final del archivo" ​>>​ archivo.txt
                 Agrega al final del archivo, el texto.*/
-                
+
                 //ver como obtener el archivo
-                agregarTexto(comandos);
+                agregarTexto(comandoInterfaz);
                 break;
             case "mv":
                 /*mv ​rutaOrigen rutaDestino
@@ -94,8 +89,8 @@ public class Comandos {
         }
 
     }
-    
-    public String[] dividirComponentes(String comando){
+
+    public String[] dividirComponentes(String comando) {
         String[] comandos = comando.split(" ");
         return comandos;
     }
@@ -161,18 +156,23 @@ public class Comandos {
             System.out.print("No hay registro de ese usuario");
         }
     }
- 
+
     public void crearArchivo(String nombreArchivo) {
         Archivo nuevoArchivo = new Archivo(nombreArchivo);
     }
-    
-    public String[] splitEcho(String aDividir){
-        return aDividir.split(" >> ");
+
+    public String[] splitEcho(String aDividir) {
+        return aDividir.split("\"|\\>>");
     }
 
-    public void agregarTexto(String[] comando) {
-        if(misArchivos.contains(comando[1])){
+    public void agregarTexto(String comandoADividir) {
+        String[] comandos = splitEcho(comandoADividir);
+        Nodo<Directorio> directorio = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), sesionActual.ruta, 1);
+        Archivo aModificar = directorio.getDato().devolverArchivo(comandos[2]);
+        aModificar.agregarContenido(comandos[1]);
+    }
 
-        }
+    String whoami() {
+        return sesionActual.usuarioActual.getNombre();
     }
 }
