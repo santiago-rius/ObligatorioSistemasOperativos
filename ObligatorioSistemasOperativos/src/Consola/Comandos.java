@@ -41,14 +41,17 @@ public class Comandos {
             case "pwd":
                 /*pwd
                 Muestra la ruta donde nos encontramos.*/
+                pwd();
                 break;
             case "mkdir":
                 /*mkdir​ nombreDirectorio
                 Crea un directorio de nombre nombreDirectorio*/
+                mkdir(comandos[1]);
                 break;
             case "rmdir":
                 /*rmdir​ nombreDirectorio
                 Elimina el directorio de nombre nombreDirectorio*/
+                rmdir(comandos[1]);
                 break;
             case "touch":
                 /*touch ​nombreArchivo
@@ -203,4 +206,19 @@ public class Comandos {
         }
         //acordarse hacer que el equals busque por nombre de usuario
     }
+    
+     String pwd(){
+        return sesionActual.ruta;
+    }
+     
+     void mkdir(String nombreDirectorio){
+        String ruta = sesionActual.ruta + "/" + nombreDirectorio;
+        sesionActual.directorios.agregarDirectorio(ruta);
+    }
+     
+     void rmdir(String nombreDirectorio){
+        String ruta = sesionActual.ruta + "/" + nombreDirectorio;
+        sesionActual.directorios.eliminarDirectorio(ruta);
+     }
+            
 }
