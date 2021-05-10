@@ -24,7 +24,7 @@ public class Directorios {
         String rutaPadre = rutaPadre(ruta);
         String nombreDir = obtenerNombre(ruta);
         Nodo<Directorio> nodoPadre = buscarDirectorio(raiz, rutaPadre, 1);
-        nodoPadre = agregarHijo(nodoPadre, nombreDir);
+        nodoPadre.setpH(agregarHijo(nodoPadre.getpH(), nombreDir));
         return nodoPadre;
     }
 
@@ -45,7 +45,7 @@ public class Directorios {
 
     private String reformarString(String[] lista, int comienzo, int fin) {
         String ret = "";
-        if (comienzo < fin && comienzo < lista.length && fin < lista.length) {
+        if (comienzo < fin && comienzo < lista.length && fin <= lista.length) {
             String[] listaNueva = Arrays.copyOfRange(lista, comienzo, fin);
             for (int i = 0; i < listaNueva.length; i++) {
                 ret += listaNueva[i];
@@ -72,7 +72,7 @@ public class Directorios {
                 return buscarDirectorio(raiz.getpH(), ruta, 0);
             }
             String[] listaRuta = ruta.split("/");
-            if (listaRuta[0].equals("/")) {
+            if (listaRuta[0].equals("")) {
                 listaRuta = Arrays.copyOfRange(listaRuta, 1, listaRuta.length);
             }
             if (raiz.getDato().nombre.equals(listaRuta[0])) {
@@ -80,7 +80,7 @@ public class Directorios {
                     return raiz;
                 } else {
                     listaRuta = Arrays.copyOfRange(listaRuta, 1, listaRuta.length);
-                    String rutaNueva = reformarString(listaRuta, 1, listaRuta.length);
+                    String rutaNueva = reformarString(listaRuta, 0, listaRuta.length);
                     return buscarDirectorio(raiz.getpH(), rutaNueva, 0);
                 }
             } else {
@@ -106,27 +106,36 @@ public class Directorios {
 
     public void eliminarDirectorio(String ruta) {
         String rutaPadre = rutaPadre(ruta);
-        Nodo<Directorio> padre = buscarDirectorio(raiz, ruta, 1);
+        Nodo<Directorio> padre = buscarDirectorio(raiz, rutaPadre, 1);
         String rutaNombre = obtenerNombre(ruta);
-        eliminarDirectorioAux(padre.getpH(), rutaNombre);
+        padre.setpH(eliminarDirectorioAux(padre.getpH(), rutaNombre));
     }
 
-    private void eliminarDirectorioAux(Nodo<Directorio> nodo, String nombreDirABorrar) {
+    private Nodo<Directorio> eliminarDirectorioAux(Nodo<Directorio> nodo, String nombreDirABorrar) {
         if (nodo != null) {
             if (nombreDirABorrar.equals("")) {
-                Nodo<Directorio> aBorrar = nodo;
                 eliminarDirectorioAux(nodo.getpH(), "");
                 eliminarDirectorioAux(nodo.getsH(), "");
                 nodo.getDato().listaArchivos.clear();
-                aBorrar = null;
+                return null;
             } else {
                 if (nombreDirABorrar.equals(nodo.getDato().getNombre())) {
-                    Nodo<Directorio> aBorrar = nodo;
                     nodo = nodo.getsH();
+                    System.gc();
+                    return nodo;
                 } else {
-                    
+                    return eliminarDirectorioAux(nodo.getsH(), nombreDirABorrar);
                 }
             }
+        } else {
+            return null;
         }
     }
+    
+    public boolean existeDirectorio(String ruta) {
+        Nodo<Directorio> nodo = buscarDirectorio(raiz, ruta, 1);
+        return nodo != null;
+    }
+    
+    
 }

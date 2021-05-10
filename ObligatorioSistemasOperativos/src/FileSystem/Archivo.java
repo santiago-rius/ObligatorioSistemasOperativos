@@ -31,8 +31,7 @@ public class Archivo {
     }
     
     public void agregarContenido (String texto){
-        String nuevoTexto = this.contenido+texto;
-        this.contenido = nuevoTexto;
+        this.contenido += texto;
     }
     
     public String getContenido(){

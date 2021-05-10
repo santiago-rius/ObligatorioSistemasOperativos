@@ -4,6 +4,7 @@ package Consola;
 import ClasesAuxiliares.Nodo;
 import FileSystem.Directorio;
 import FileSystem.Directorios;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,12 +16,19 @@ public class Sesion {
     Usuario usuarioActual;
     String ruta;
     Directorios directorios;
+
+    public Sesion() {
+        misUsuarios = new ArrayList<>();
+        usuarioActual = new UsuarioEstandar("usuario no autenticado");
+        ruta = "/";
+        directorios = new Directorios();
+    }
     
     Usuario getUsuario(){
         return this.usuarioActual;
     }
-    void setUsuario(Usuario usuarioA){
-        this.usuarioActual.equals(usuarioA);
+    void setUsuarioActual(Usuario usuarioA){
+        this.usuarioActual = usuarioA;
     }
     
     public void setRuta(String rutaActual){

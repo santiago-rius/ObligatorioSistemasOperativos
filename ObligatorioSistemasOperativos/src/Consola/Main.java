@@ -21,10 +21,16 @@ public class Main {
      */
     public static void main(String[] args) {
         System.out.println("Hello World");
-        Directorios dir = new Directorios();
-        dir.agregarDirectorio("/carpeta");
-        dir.agregarDirectorio("/carpeta/carpeta2");
-        Nodo<Directorio> test = dir.buscarDirectorio(dir.getRaiz(), "/carpeta/carpeta2", 1);
+//        Directorios dir = new Directorios();
+//        dir.agregarDirectorio("/carpeta");
+//        dir.agregarDirectorio("/carpeta/carpeta2");
+//        Nodo<Directorio> test = dir.buscarDirectorio(dir.getRaiz(), "/carpeta/carpeta2", 1);
+//        dir.eliminarDirectorio("/carpeta/carpeta2");
+
+        Sistema sistema = new Sistema();
+        while(!sistema.isExit()) {
+            sistema.inputConsola();
+        }
     }
     
 }

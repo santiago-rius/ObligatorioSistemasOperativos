@@ -5,6 +5,7 @@
  */
 package FileSystem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +19,7 @@ public class Directorio {
 
     public Directorio(String nombre) {
         this.nombre = nombre;
+        listaArchivos = new ArrayList<>();
     }
 
     public List<Archivo> getListaArchivos() {

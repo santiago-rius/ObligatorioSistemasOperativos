@@ -86,7 +86,9 @@ public abstract class Usuario {
 
     @Override
     public int hashCode() {
-        int hash = 7;
+        int hash = 5;
+        int aux = this.nombre != null ? this.nombre.hashCode() : 0;
+        hash = 89 * hash + aux;
         return hash;
     }
 

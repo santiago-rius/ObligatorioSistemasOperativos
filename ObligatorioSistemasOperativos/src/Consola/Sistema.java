@@ -5,11 +5,32 @@ import FileSystem.Archivo;
 import FileSystem.Directorio;
 import java.util.Scanner;
 
-public class Comandos {
+public class Sistema {
 
-    Sesion sesionActual;
+    private Sesion sesionActual;
+    private boolean exit = false;
 
-    public void menu(String comandoInterfaz) {
+    public Sistema() {
+        sesionActual = new Sesion();
+    }
+
+    public Sesion getSesionActual() {
+        return sesionActual;
+    }
+
+    public void setSesionActual(Sesion sesionActual) {
+        this.sesionActual = sesionActual;
+    }
+
+    public boolean isExit() {
+        return exit;
+    }
+
+    public void setExit(boolean exit) {
+        this.exit = exit;
+    }
+
+    public void comandos(String comandoInterfaz) {
         String[] comandos = dividirComponentes(comandoInterfaz);
 
         switch (comandos[0]) {
@@ -84,15 +105,27 @@ public class Comandos {
             case "cd":
                 /*cd​ ruta
                 Se posiciona dentro de la ruta elegida. Muestra error en caso que la misma no exista.*/
+                cd(comandos[1]);
                 break;
             case "ls -l":
                 /* ls -l
                 Muestra el contenido de la carpeta donde se está posicionado. Incluyendo propietario,permisos y fecha y hora de creación (toda la metadata visible es necesario que semodele).*/
                 break;
+            case "exit":
+                this.exit = true;
 
             /*faltan comandos*/
+            default:
+                System.out.println("no c");
         }
 
+    }
+    
+    public void inputConsola() {
+        System.out.println(sesionActual.usuarioActual.nombre + ">@" +sesionActual.ruta);
+        Scanner sc = new Scanner(System.in);
+        String comando = sc.nextLine();
+        comandos(comando);
     }
 
     public String[] dividirComponentes(String comando) {
@@ -128,11 +161,14 @@ public class Comandos {
             contraseña = cont;
             contraseña2 = cont2;
         }
+        nuevoUsuario.setContraseña(contraseña);
+        sesionActual.misUsuarios.add(nuevoUsuario);
+        sesionActual.usuarioActual = nuevoUsuario;
     }
 
     public void modificarContraseña(String nombreUsuario) {
         //crear lista de todos los usuarios
-        if (sesionActual.misUsuarios.contains(nombreUsuario)) { //aca busco en la supuesta lista de usuarios a ver si existe el pibito
+        if (sesionActual.misUsuarios.contains(new UsuarioEstandar(nombreUsuario))) { //aca busco en la supuesta lista de usuarios a ver si existe el pibito
             System.out.print("Ingrese la nueva contraseña: ");
             Scanner contraseñaUsuario = new Scanner(System.in);
             String contraseña = contraseñaUsuario.nextLine();
@@ -163,7 +199,8 @@ public class Comandos {
     }
 
     public void crearArchivo(String nombreArchivo) {
-        Archivo nuevoArchivo = new Archivo(nombreArchivo);
+        Nodo<Directorio> nodo = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), sesionActual.ruta, 1);
+        nodo.getDato().AgregarArchivo(nombreArchivo);
     }
 
     public String[] splitEcho(String aDividir) {
@@ -171,7 +208,7 @@ public class Comandos {
     }
 
     public void agregarTexto(String comandoADividir) {
-        String[] comandos = splitEcho(comandoADividir);
+        String[] comandos = splitEcho(comandoADividir); //hay un problema aca: [0] echo "texto" ; [1] nombre.txt
         Nodo<Directorio> directorio = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), sesionActual.ruta, 1);
         Archivo aModificar = directorio.getDato().devolverArchivo(comandos[2]);
         aModificar.agregarContenido(comandos[1]);
@@ -194,31 +231,42 @@ public class Comandos {
                 nuevoAutenticado = usu;
             }
         }
+        boolean repetir = true;
+        while (repetir) {
+            System.out.print("Ingrese la contraseña para autenticarse como " + nombreU);
+            Scanner contraseñaUsuario = new Scanner(System.in);
+            String contraseña = contraseñaUsuario.nextLine();
 
-        System.out.print("Ingrese la contraseña para autenticarse como " + nombreU);
-        Scanner contraseñaUsuario = new Scanner(System.in);
-        String contraseña = contraseñaUsuario.nextLine();
-
-        if (contraseña.equals(nuevoAutenticado.getContraseña())) {
-            sesionActual.setUsuario(nuevoAutenticado);
-        } else {
-            System.out.print("ERROR! Contraseña incorrecta");
+            if (contraseña.equals(nuevoAutenticado.getContraseña())) {
+                sesionActual.setUsuarioActual(nuevoAutenticado);
+                repetir = false;
+            } else {
+                System.out.print("ERROR! Contraseña incorrecta");
+            }
         }
         //acordarse hacer que el equals busque por nombre de usuario
     }
-    
-     String pwd(){
+
+    String pwd() {
         return sesionActual.ruta;
     }
-     
-     void mkdir(String nombreDirectorio){
+
+    void mkdir(String nombreDirectorio) {
         String ruta = sesionActual.ruta + "/" + nombreDirectorio;
         sesionActual.directorios.agregarDirectorio(ruta);
     }
-     
-     void rmdir(String nombreDirectorio){
+
+    void rmdir(String nombreDirectorio) {
         String ruta = sesionActual.ruta + "/" + nombreDirectorio;
         sesionActual.directorios.eliminarDirectorio(ruta);
-     }
-            
+    }
+    
+    public void cd(String ruta) {
+        if(sesionActual.directorios.existeDirectorio(ruta)) {
+            sesionActual.ruta = ruta;
+        } else {
+            System.out.print("Ruta ingresada no es valida.");
+        }
+    }
+
 }

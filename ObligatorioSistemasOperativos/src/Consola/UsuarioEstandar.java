@@ -15,4 +15,17 @@ public class UsuarioEstandar extends Usuario{
     public UsuarioEstandar(String unNombre) {
         super(unNombre);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        Usuario usu = (UsuarioEstandar) obj;
+        return usu.nombre.equals(this.nombre);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode(); //To change body of generated methods, choose Tools | Templates.
+    }
+      
+    
 }
