@@ -23,7 +23,7 @@ public class Sesion {
         this.usuarioActual.equals(usuarioA);
     }
     
-    private void setRuta(String rutaActual){
+    public void setRuta(String rutaActual){
         this.ruta = rutaActual;
     }
 

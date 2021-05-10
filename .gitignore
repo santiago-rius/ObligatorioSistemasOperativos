@@ -23,3 +23,5 @@
 hs_err_pid*
 /ObligatorioSistemasOperativos/nbproject/private/
 /ObligatorioSistemasOperativos/build
+/ObligatorioSistemasOperativos/dist/
+/ObligatorioSistemasOperativos/nbproject/build-impl.xml

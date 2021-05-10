@@ -38,6 +38,7 @@ public class Directorios {
 
     private String rutaPadre(String ruta) {
         String[] aux = ruta.split("/");
+        aux[0]="/";
         String rutaPadre = reformarString(aux, 0, aux.length - 1);
         return rutaPadre;
     }
@@ -46,7 +47,7 @@ public class Directorios {
         String ret = "";
         if (comienzo < fin && comienzo < lista.length && fin < lista.length) {
             String[] listaNueva = Arrays.copyOfRange(lista, comienzo, fin);
-            for (int i = 0; i < listaNueva.length - 1; i++) {
+            for (int i = 0; i < listaNueva.length; i++) {
                 ret += listaNueva[i];
             }
         }
@@ -55,8 +56,9 @@ public class Directorios {
 
     private String obtenerNombre(String ruta) {
         String[] aux = ruta.split("/");
+        aux[0]="/";
         int largo = aux.length;
-        String nombreDir = aux[largo];
+        String nombreDir = aux[largo-1];
         return nombreDir;
     }
 
