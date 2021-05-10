@@ -1,5 +1,7 @@
 package FileSystem;
 
+import Consola.Usuario;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -13,7 +15,7 @@ package FileSystem;
 public class Archivo {
     private String nombre;
     private String contenido;
-    
+    private Usuario propietario;
     
     public Archivo(String nombre) {
         this.nombre = nombre;
@@ -33,8 +35,17 @@ public class Archivo {
         this.contenido = nuevoTexto;
     }
     
-    public String mostrarContenido(){
+    public String getContenido(){
         return this.contenido;
     }
+
+    public Usuario getPropietario() {
+        return propietario;
+    }
+
+    public void setPropietario(Usuario propietario) {
+        this.propietario = propietario;
+    }
+    
     
 }

@@ -1,3 +1,4 @@
+package Consola;
 
 import ClasesAuxiliares.Nodo;
 import FileSystem.Archivo;
@@ -23,6 +24,7 @@ public class Comandos {
                 modificarContraseña(comandos[1]);
                 break;
             case "su":
+                su(comandos[1]);
                 /*su ​nombreUsuario
                 Luego de pedirnos la contraseña, nos permite autenticarnos con otro usuario. Notar quepide la contraseña.*/
                 break;
@@ -149,9 +151,9 @@ public class Comandos {
 
     public void eliminarUsuario(String nombreUsuario) {
         int indice = sesionActual.misUsuarios.indexOf(nombreUsuario);
-
+        Usuario aux = new UsuarioEstandar(nombreUsuario);
         if (indice != -1) { // aca borro al pibito de la lista
-            sesionActual.misUsuarios.remove(nombreUsuario);
+            sesionActual.misUsuarios.remove(aux);
         } else {
             System.out.print("No hay registro de ese usuario");
         }
@@ -174,5 +176,31 @@ public class Comandos {
 
     String whoami() {
         return sesionActual.usuarioActual.getNombre();
+    }
+
+    public void su(String nombreU) {
+        Usuario aux = new UsuarioEstandar(nombreU);
+        if (!sesionActual.misUsuarios.contains(aux)) {
+            System.out.print("Usuario no existente");
+            return;
+        }
+
+        Usuario nuevoAutenticado = null;
+        for (Usuario usu : sesionActual.misUsuarios) {
+            if (usu.getNombre().equals(nombreU)) {
+                nuevoAutenticado = usu;
+            }
+        }
+
+        System.out.print("Ingrese la contraseña para autenticarse como " + nombreU);
+        Scanner contraseñaUsuario = new Scanner(System.in);
+        String contraseña = contraseñaUsuario.nextLine();
+
+        if (contraseña.equals(nuevoAutenticado.getContraseña())) {
+            sesionActual.setUsuario(nuevoAutenticado);
+        } else {
+            System.out.print("ERROR! Contraseña incorrecta");
+        }
+        //acordarse hacer que el equals busque por nombre de usuario
     }
 }

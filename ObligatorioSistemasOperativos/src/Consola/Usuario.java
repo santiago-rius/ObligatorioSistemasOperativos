@@ -1,3 +1,7 @@
+package Consola;
+
+import java.util.Objects;
+
 /*
 * To change this license header, choose License Headers in Project Properties.
 * To change this template file, choose Tools | Templates
@@ -79,4 +83,24 @@ public abstract class Usuario {
             System.out.println("La contraseña no debe tener una sola palabra");
         }
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Usuario other = (Usuario) obj;
+        return Objects.equals(this.nombre, other.nombre);
+    }
+    
+    
 }
