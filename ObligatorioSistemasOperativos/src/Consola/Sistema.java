@@ -89,18 +89,22 @@ public class Sistema {
             case "mv":
                 /*mv ​rutaOrigen rutaDestino
                 Mueve un archivo desde la ruta al destino*/
+                mv(comandos[1], comandos[2]);
                 break;
             case "cp":
                 /*    cp​ rutaOrigen rutaDestino
                 Copia un archivo desde origen a destino*/
+                cp(comandos[1], comandos[2]);
                 break;
             case "cat":
                 /*cat ​nombreArchivo
             Muestra en pantalla el contenido de un archivo*/
+                cat(comandos[1]);
                 break;
             case "rm":
                 /*rm​ nombreArchivo
                 Borra un archivo*/
+                rm(comandos[1]);
                 break;
             case "cd":
                 /*cd​ ruta
@@ -211,7 +215,9 @@ public class Sistema {
         String[] comandos = splitEcho(comandoADividir); //hay un problema aca: [0] echo "texto" ; [1] nombre.txt
         Nodo<Directorio> directorio = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), sesionActual.ruta, 1);
         Archivo aModificar = directorio.getDato().devolverArchivo(comandos[2]);
-        aModificar.agregarContenido(comandos[1]);
+        if(canWrite(sesionActual.usuarioActual, aModificar)){
+            aModificar.agregarContenido(comandos[1]);
+        }
     }
 
     String whoami() {
@@ -268,5 +274,39 @@ public class Sistema {
             System.out.print("Ruta ingresada no es valida.");
         }
     }
+    
+    public void mv(String nombreArchivo, String rutaDestino){
+        if(!sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), rutaDestino, 0).getDato().contieneArchivo(nombreArchivo)){
+            Nodo<Directorio> directorioActual = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), sesionActual.ruta, 1);
+            Archivo archivoAMover = directorioActual.getDato().borrarYDevolverArchivo(nombreArchivo);
+            if(sesionActual.directorios.existeDirectorio(rutaDestino)){
+                Nodo<Directorio> directorioNuevo = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), rutaDestino, 1);
+                directorioNuevo.getDato().AgregarArchivo(archivoAMover);               
+            }
+        }
+    }
+    
+    public void cp(String nombreArchivo, String rutaDestino){
+         if(!sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), rutaDestino, 0).getDato().contieneArchivo(nombreArchivo)){
+            Nodo<Directorio> directorioActual = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), sesionActual.ruta, 1);
+            Archivo archivoACopiar = directorioActual.getDato().devolverArchivo(nombreArchivo);
+            if(sesionActual.directorios.existeDirectorio(rutaDestino)){
+                Nodo<Directorio> directorioNuevo = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), rutaDestino, 1);
+                directorioNuevo.getDato().AgregarArchivo(archivoACopiar);               
+            }
+        }
 
+    }
+    
+    public void cat(String nombreArchivo){
+        Nodo<Directorio> directorioActual = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), sesionActual.ruta, 1);
+        if(canRead(sesionActual.usuarioActual, directorioActual.getDato().devolverArchivo(nombreArchivo))){
+            System.out.println(directorioActual.getDato().devolverArchivo(nombreArchivo).getContenido());
+        }
+    }
+
+    public void rm(String nombreArchivo){
+        Nodo<Directorio> directorioActual = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), sesionActual.ruta, 1);
+        Archivo archivoACopiar = directorioActual.getDato().borrarYDevolverArchivo(nombreArchivo);
+    }
 }
