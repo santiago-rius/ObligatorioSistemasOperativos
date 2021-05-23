@@ -22,11 +22,11 @@ public abstract class Usuario {
         this.contraseña = null;
     }
 
-    String getContraseña() {
+    public String getContraseña() {
         return this.contraseña;
     }
 
-    String getNombre() {
+    public String getNombre() {
         return this.nombre;
     }
 
