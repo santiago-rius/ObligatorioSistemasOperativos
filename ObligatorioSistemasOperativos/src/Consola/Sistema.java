@@ -1,6 +1,8 @@
 package Consola;
 
 import ClasesAuxiliares.Nodo;
+import static ClasesAuxiliares.Utils.canRead;
+import static ClasesAuxiliares.Utils.canWrite;
 import FileSystem.Archivo;
 import FileSystem.Directorio;
 import java.util.Scanner;
