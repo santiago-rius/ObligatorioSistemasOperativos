@@ -215,7 +215,9 @@ public class Sistema {
         String[] comandos = splitEcho(comandoADividir); //hay un problema aca: [0] echo "texto" ; [1] nombre.txt
         Nodo<Directorio> directorio = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), sesionActual.ruta, 1);
         Archivo aModificar = directorio.getDato().devolverArchivo(comandos[2]);
-        aModificar.agregarContenido(comandos[1]);
+        if(canWrite(sesionActual.usuarioActual, aModificar)){
+            aModificar.agregarContenido(comandos[1]);
+        }
     }
 
     String whoami() {
@@ -298,7 +300,9 @@ public class Sistema {
     
     public void cat(String nombreArchivo){
         Nodo<Directorio> directorioActual = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), sesionActual.ruta, 1);
-        System.out.println(directorioActual.getDato().devolverArchivo(nombreArchivo).getContenido());
+        if(canRead(sesionActual.usuarioActual, directorioActual.getDato().devolverArchivo(nombreArchivo))){
+            System.out.println(directorioActual.getDato().devolverArchivo(nombreArchivo).getContenido());
+        }
     }
 
     public void rm(String nombreArchivo){
