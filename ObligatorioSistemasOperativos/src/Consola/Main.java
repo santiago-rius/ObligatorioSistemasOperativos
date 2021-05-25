@@ -1,6 +1,7 @@
 package Consola;
 
 import ClasesAuxiliares.Nodo;
+import FileSystem.Archivo;
 import FileSystem.Directorio;
 import FileSystem.Directorios;
 
@@ -21,16 +22,24 @@ public class Main {
      */
     public static void main(String[] args) {
         System.out.println("Hello World");
-//        Directorios dir = new Directorios();
-//        dir.agregarDirectorio("/carpeta");
-//        dir.agregarDirectorio("/carpeta/carpeta2");
-//        Nodo<Directorio> test = dir.buscarDirectorio(dir.getRaiz(), "/carpeta/carpeta2", 1);
+
 //        dir.eliminarDirectorio("/carpeta/carpeta2");
 
         Sistema sistema = new Sistema();
+        crearCarpetasDePrueba(sistema.getSesionActual().getDirectorios(), sistema.getSesionActual());
         while(!sistema.isExit()) {
             sistema.inputConsola();
         }
+    }
+    
+    public static void crearCarpetasDePrueba(Directorios dir, Sesion ses) {
+        dir.agregarDirectorio("/carpeta");
+        dir.agregarDirectorio("/carpeta/carpeta2");
+        Archivo arch = new Archivo("arch.txt");
+        arch.setPropietario(ses.getUsuario());
+        arch.setMascara(704);
+        arch.agregarContenido("prueba prueba \n prueba prueba");
+        dir.buscarDirectorio(dir.getRaiz(), "/carpeta", 1).getDato().AgregarArchivo(arch);
     }
     
 }

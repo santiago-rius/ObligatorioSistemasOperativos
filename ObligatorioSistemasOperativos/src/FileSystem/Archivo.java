@@ -2,6 +2,7 @@ package FileSystem;
 
 import static ClasesAuxiliares.Utils.convertirMascara;
 import Consola.Usuario;
+import java.util.Objects;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -61,11 +62,28 @@ public class Archivo {
         StringBuilder sb = new StringBuilder();
         String mascaraString = convertirMascara(mascara);
         sb.append(mascaraString).append(" - ");
-        sb.append(propietario.getNombre()).append("     ");
+        sb.append(propietario.getNombre()).append(" ");
+        int largoColumnaUsuario = 20 - propietario.getNombre().length();
+        while(largoColumnaUsuario > 0) {
+            sb.append(" ");
+            largoColumnaUsuario--;
+        }
         sb.append(" - ");
         sb.append(contenido.length()).append(" ");
         sb.append(" - ");
         sb.append(nombre);
         return sb.toString();
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+         if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Archivo other = (Archivo) obj;
+        return Objects.equals(this.nombre, other.nombre);
     }
 }

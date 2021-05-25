@@ -34,101 +34,109 @@ public class Sistema {
 
     public void comandos(String comandoInterfaz) {
         String[] comandos = dividirComponentes(comandoInterfaz);
-
-        switch (comandos[0]) {
-            case "useradd":
-                //useradd ​nombreUsuario
-                //Tiene como parámetro el nombre de usuario a crear.
-                agregarUsuario(comandos[1]);
-                break;
-            case "passwd":
-                //passwd ​nombreUsuario                
-                //Modifica la contraseña del usuario. El sistema pide el ingreso de la contraseña 2 veces. Si no coinciden, muestra mensaje de error.
-                modificarContraseña(comandos[1]);
-                break;
-            case "su":
-                su(comandos[1]);
-                /*su ​nombreUsuario
+        try {
+            switch (comandos[0]) {
+                case "useradd":
+                    //useradd ​nombreUsuario
+                    //Tiene como parámetro el nombre de usuario a crear.
+                    agregarUsuario(comandos[1]);
+                    break;
+                case "passwd":
+                    //passwd ​nombreUsuario                
+                    //Modifica la contraseña del usuario. El sistema pide el ingreso de la contraseña 2 veces. Si no coinciden, muestra mensaje de error.
+                    modificarContraseña(comandos[1]);
+                    break;
+                case "su":
+                    su(comandos[1]);
+                    /*su ​nombreUsuario
                 Luego de pedirnos la contraseña, nos permite autenticarnos con otro usuario. Notar quepide la contraseña.*/
-                break;
-            case "userdel":
-                /* userdel ​nombreUsuario
+                    break;
+                case "userdel":
+                    /* userdel ​nombreUsuario
                   Elimina el usuario y toda la información relativa a él.*/
-                eliminarUsuario(comandos[1]);
-                break;
-            case "whoami":
-                /*whoami
+                    eliminarUsuario(comandos[1]);
+                    break;
+                case "whoami":
+                    /*whoami
                 Muestra el nombre de usuario autenticado(puede parecer irrelevante, ya que el prompt muestra el nombre de usuario, pero noaplica a todos los casos)*/
-                whoami();
-                break;
-            case "pwd":
-                /*pwd
+                    whoami();
+                    break;
+                case "pwd":
+                    /*pwd
                 Muestra la ruta donde nos encontramos.*/
-                pwd();
-                break;
-            case "mkdir":
-                /*mkdir​ nombreDirectorio
+                    pwd();
+                    break;
+                case "mkdir":
+                    /*mkdir​ nombreDirectorio
                 Crea un directorio de nombre nombreDirectorio*/
-                mkdir(comandos[1]);
-                break;
-            case "rmdir":
-                /*rmdir​ nombreDirectorio
+                    mkdir(comandos[1]);
+                    break;
+                case "rmdir":
+                    /*rmdir​ nombreDirectorio
                 Elimina el directorio de nombre nombreDirectorio*/
-                rmdir(comandos[1]);
-                break;
-            case "touch":
-                /*touch ​nombreArchivo
+                    rmdir(comandos[1]);
+                    break;
+                case "touch":
+                    /*touch ​nombreArchivo
                 Crea un archivo vacío. En este obligatorio se pide únicamente crear archivos de tipo txt.*/
-                crearArchivo(comandos[1]);
-                break;
-            case "echo":
-                /*echo​ "Texto al final del archivo" ​>>​ archivo.txt
+                    crearArchivo(comandos[1]);
+                    break;
+                case "echo":
+                    /*echo​ "Texto al final del archivo" ​>>​ archivo.txt
                 Agrega al final del archivo, el texto.*/
 
-                //ver como obtener el archivo
-                agregarTexto(comandoInterfaz);
-                break;
-            case "mv":
-                /*mv ​rutaOrigen rutaDestino
+                    //ver como obtener el archivo
+                    agregarTexto(comandoInterfaz);
+                    break;
+                case "mv":
+                    /*mv ​rutaOrigen rutaDestino
                 Mueve un archivo desde la ruta al destino*/
-                mv(comandos[1], comandos[2]);
-                break;
-            case "cp":
-                /*    cp​ rutaOrigen rutaDestino
+                    mv(comandos[1], comandos[2]);
+                    break;
+                case "cp":
+                    /*    cp​ rutaOrigen rutaDestino
                 Copia un archivo desde origen a destino*/
-                cp(comandos[1], comandos[2]);
-                break;
-            case "cat":
-                /*cat ​nombreArchivo
+                    cp(comandos[1], comandos[2]);
+                    break;
+                case "cat":
+                    /*cat ​nombreArchivo
             Muestra en pantalla el contenido de un archivo*/
-                cat(comandos[1]);
-                break;
-            case "rm":
-                /*rm​ nombreArchivo
+                    cat(comandos[1]);
+                    break;
+                case "rm":
+                    /*rm​ nombreArchivo
                 Borra un archivo*/
-                rm(comandos[1]);
-                break;
-            case "cd":
-                /*cd​ ruta
+                    rm(comandos[1]);
+                    break;
+                case "cd":
+                    /*cd​ ruta
                 Se posiciona dentro de la ruta elegida. Muestra error en caso que la misma no exista.*/
-                cd(comandos[1]);
-                break;
-            case "ls -l":
-                /* ls -l
+                    cd(comandos[1]);
+                    break;
+                case "ls -l":
+                    /* ls -l
                 Muestra el contenido de la carpeta donde se está posicionado. Incluyendo propietario,permisos y fecha y hora de creación (toda la metadata visible es necesario que semodele).*/
-                break;
-            case "exit":
-                this.exit = true;
-
-            /*faltan comandos*/
-            default:
-                System.out.println("no c");
+                    break;
+                case "exit":
+                    this.exit = true;
+                case "chmod":
+                    asignarPermisos(comandos[1], comandos[2]);
+                    break;
+                case "ls":
+                    mostrarContenidoCompleto();
+                    break;
+                /*faltan comandos*/
+                default:
+                    System.out.println("no c");
+            }
+        } catch (IndexOutOfBoundsException ex) {
+            System.out.println("Comando no valido.");
         }
 
     }
-    
+
     public void inputConsola() {
-        System.out.println(sesionActual.usuarioActual.nombre + ">@" +sesionActual.ruta);
+        System.out.println(sesionActual.usuarioActual.nombre + ">@" + sesionActual.ruta);
         Scanner sc = new Scanner(System.in);
         String comando = sc.nextLine();
         comandos(comando);
@@ -169,7 +177,7 @@ public class Sistema {
         }
         nuevoUsuario.setContraseña(contraseña);
         sesionActual.misUsuarios.add(nuevoUsuario);
-        sesionActual.usuarioActual = nuevoUsuario;
+        sesionActual.setUsuarioActual(nuevoUsuario);
     }
 
     public void modificarContraseña(String nombreUsuario) {
@@ -206,18 +214,21 @@ public class Sistema {
 
     public void crearArchivo(String nombreArchivo) {
         Nodo<Directorio> nodo = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), sesionActual.ruta, 1);
-        nodo.getDato().AgregarArchivo(nombreArchivo);
+        Archivo nuevoArchivo = new Archivo(nombreArchivo);
+        nuevoArchivo.setPropietario(sesionActual.getUsuario());
+        nuevoArchivo.setMascara(704);
+        nodo.getDato().AgregarArchivo(nuevoArchivo);
     }
 
     public String[] splitEcho(String aDividir) {
-        return aDividir.split("\"|\\>>");
+        return aDividir.split("\"|\\>> ");
     }
 
     public void agregarTexto(String comandoADividir) {
         String[] comandos = splitEcho(comandoADividir); //hay un problema aca: [0] echo "texto" ; [1] nombre.txt
         Nodo<Directorio> directorio = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), sesionActual.ruta, 1);
-        Archivo aModificar = directorio.getDato().devolverArchivo(comandos[2]);
-        if(canWrite(sesionActual.usuarioActual, aModificar)){
+        Archivo aModificar = directorio.getDato().devolverArchivo(comandos[3]);
+        if (canWrite(sesionActual.usuarioActual, aModificar)) {
             aModificar.agregarContenido(comandos[1]);
         }
     }
@@ -268,47 +279,68 @@ public class Sistema {
         String ruta = sesionActual.ruta + "/" + nombreDirectorio;
         sesionActual.directorios.eliminarDirectorio(ruta);
     }
-    
+
     public void cd(String ruta) {
-        if(sesionActual.directorios.existeDirectorio(ruta)) {
+        if (sesionActual.directorios.existeDirectorio(ruta)) {
             sesionActual.ruta = ruta;
         } else {
-            System.out.print("Ruta ingresada no es valida.");
+            System.out.println("La ruta ingresada no es valida.");
         }
     }
-    
-    public void mv(String nombreArchivo, String rutaDestino){
-        if(!sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), rutaDestino, 0).getDato().contieneArchivo(nombreArchivo)){
+
+    public void mv(String nombreArchivo, String rutaDestino) {
+        if (!sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), rutaDestino, 0).getDato().contieneArchivo(nombreArchivo)) {
             Nodo<Directorio> directorioActual = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), sesionActual.ruta, 1);
             Archivo archivoAMover = directorioActual.getDato().borrarYDevolverArchivo(nombreArchivo);
-            if(sesionActual.directorios.existeDirectorio(rutaDestino)){
+            if (sesionActual.directorios.existeDirectorio(rutaDestino)) {
                 Nodo<Directorio> directorioNuevo = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), rutaDestino, 1);
-                directorioNuevo.getDato().AgregarArchivo(archivoAMover);               
+                directorioNuevo.getDato().AgregarArchivo(archivoAMover);
             }
         }
     }
-    
-    public void cp(String nombreArchivo, String rutaDestino){
-         if(!sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), rutaDestino, 0).getDato().contieneArchivo(nombreArchivo)){
+
+    public void cp(String nombreArchivo, String rutaDestino) {
+        if (!sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), rutaDestino, 0).getDato().contieneArchivo(nombreArchivo)) {
             Nodo<Directorio> directorioActual = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), sesionActual.ruta, 1);
             Archivo archivoACopiar = directorioActual.getDato().devolverArchivo(nombreArchivo);
-            if(sesionActual.directorios.existeDirectorio(rutaDestino)){
+            if (sesionActual.directorios.existeDirectorio(rutaDestino)) {
                 Nodo<Directorio> directorioNuevo = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), rutaDestino, 1);
-                directorioNuevo.getDato().AgregarArchivo(archivoACopiar);               
+                directorioNuevo.getDato().AgregarArchivo(archivoACopiar);
             }
         }
 
     }
-    
-    public void cat(String nombreArchivo){
+
+    public void cat(String nombreArchivo) {
         Nodo<Directorio> directorioActual = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), sesionActual.ruta, 1);
-        if(canRead(sesionActual.usuarioActual, directorioActual.getDato().devolverArchivo(nombreArchivo))){
+        if (canRead(sesionActual.usuarioActual, directorioActual.getDato().devolverArchivo(nombreArchivo))) {
             System.out.println(directorioActual.getDato().devolverArchivo(nombreArchivo).getContenido());
         }
     }
 
-    public void rm(String nombreArchivo){
+    public void rm(String nombreArchivo) {
         Nodo<Directorio> directorioActual = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), sesionActual.ruta, 1);
         Archivo archivoACopiar = directorioActual.getDato().borrarYDevolverArchivo(nombreArchivo);
+    }
+
+    private void asignarPermisos(String mascara, String nombreArchivo) {
+        Nodo<Directorio> directorioActual = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), sesionActual.ruta, 1);
+        Archivo archivo = directorioActual.getDato().devolverArchivo(nombreArchivo);
+        if (archivo.getPropietario().equals(sesionActual.getUsuario()) || sesionActual.getUsuario().getClass().equals(UsuarioAdmin.class)) {
+            try {
+                archivo.setMascara(Integer.parseInt(mascara));
+            } catch (NumberFormatException ex) {
+                System.out.println("La mascara solo puede conener numeros");
+            }
+        } else {
+            System.out.println("No esta habilitado para editar los permisos de este archivo.");
+        }
+    }
+
+    private void mostrarContenidoCompleto() {
+        Nodo<Directorio> directorioActual = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), sesionActual.ruta, 1);
+        for(Archivo arch : directorioActual.getDato().getListaArchivos()) {
+            System.out.println(arch.toString());
+        }
     }
 }
