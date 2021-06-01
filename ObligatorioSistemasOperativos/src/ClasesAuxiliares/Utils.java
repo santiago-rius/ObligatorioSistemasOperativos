@@ -6,7 +6,6 @@
 package ClasesAuxiliares;
 
 import Consola.Usuario;
-import Consola.UsuarioAdmin;
 import FileSystem.Archivo;
 
 /**
@@ -15,12 +14,12 @@ import FileSystem.Archivo;
  */
 public class Utils {
 
-    public static String convertirMascara(int mascara) {
-        String masc = mascara + "";
+    public static String convertirMascara(String mascara) {
+        String masc = mascara;
         String mascaraString = "";
         if (masc.length() == 3 && verificarMascara(masc)) {
             for (int i = 0; i < 3; i++) {
-                mascaraString += convertir(masc.charAt(i) + "");
+                mascaraString += convertir(masc.charAt(i)+ "");
             }
         }
         return mascaraString;
@@ -70,7 +69,7 @@ public class Utils {
                 String permisosPropietario = mascara.charAt(0) + "";
                 int permiso = Integer.parseInt(permisosPropietario);
                 return permiso >= 4 && permiso <= 7;
-            } else if (user.getClass().equals(UsuarioAdmin.class)) {
+            } else if (user.getNombre().equals("root")) {
                 return true;
             } else {
                 String mascara = arch.getMascara() + "";
@@ -91,7 +90,7 @@ public class Utils {
                 String permisosPropietario = mascara.charAt(0) + "";
                 int permiso = Integer.parseInt(permisosPropietario);
                 return permiso == 2 || permiso == 3 || permiso == 6 || permiso == 7;
-            } else if (user.getClass().equals(UsuarioAdmin.class)) {
+            } else if (user.getNombre().equals("root")) {
                 return true;
             } else {
                 String mascara = arch.getMascara() + "";
@@ -112,7 +111,7 @@ public class Utils {
                 String permisosPropietario = mascara.charAt(0) + "";
                 int permiso = Integer.parseInt(permisosPropietario);
                 return permiso == 1 || permiso == 3 || permiso == 5 || permiso == 7;
-            } else if (user.getClass().equals(UsuarioAdmin.class)) {
+            } else if (user.getNombre().equals("root")) {
                 return true;
             } else {
                 String mascara = arch.getMascara() + "";

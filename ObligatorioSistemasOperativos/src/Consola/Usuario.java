@@ -12,14 +12,14 @@ import java.util.Objects;
  *
  * @author Santiago
  */
-public abstract class Usuario {
+public class Usuario {
 
     String contraseña;
     String nombre; //nombre usuario es clave
 
     public Usuario(String unNombre) {
         this.nombre = unNombre;
-        this.contraseña = null;
+        this.contraseña = "root";
     }
 
     public String getContraseña() {
@@ -83,26 +83,27 @@ public abstract class Usuario {
             System.out.println("La contraseña no debe tener una sola palabra");
         }
     }
+    
+    public boolean esAdmin() {
+        return this.nombre.equals("root");
+    }
+    
+    public boolean esVisita() {
+        return this.nombre.equals("visita");
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Usuario) {
+            Usuario toCompare = (Usuario) obj;
+            return this.nombre.equals(toCompare.nombre);
+        }
+        return false;
+    }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        int aux = this.nombre != null ? this.nombre.hashCode() : 0;
-        hash = 89 * hash + aux;
-        return hash;
+        return this.nombre.hashCode();
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Usuario other = (Usuario) obj;
-        return Objects.equals(this.nombre, other.nombre);
-    }
-    
     
 }

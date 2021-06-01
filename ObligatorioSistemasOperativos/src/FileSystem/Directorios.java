@@ -37,9 +37,17 @@ public class Directorios {
     }
 
     private String rutaPadre(String ruta) {
-        String[] aux = ruta.split("/");
-        aux[0]="/";
-        String rutaPadre = reformarString(aux, 0, aux.length - 1);
+        String rutaPadre;
+        int posUltimo = 0;
+        for (int i = 0; i < ruta.length(); i++) {
+            if(ruta.charAt(i) == '/') {
+                posUltimo = i;
+            }
+        }
+        if(posUltimo == 0) {
+            return "/";
+        }
+        rutaPadre = ruta.substring(0, posUltimo+1);
         return rutaPadre;
     }
 
@@ -54,11 +62,26 @@ public class Directorios {
         return ret;
     }
 
+    private String reformarStringConSep(String[] lista, int comienzo, int fin, String sep) {
+        String ret = "";
+        if (comienzo < fin && comienzo < lista.length && fin <= lista.length) {
+            String[] listaNueva = Arrays.copyOfRange(lista, comienzo, fin);
+            for (int i = 0; i < listaNueva.length; i++) {
+                if (i == listaNueva.length - 1) {
+                    ret += listaNueva[i];
+                } else {
+                    ret += listaNueva[i] + "/";
+                }
+            }
+        }
+        return ret;
+    }
+
     private String obtenerNombre(String ruta) {
         String[] aux = ruta.split("/");
-        aux[0]="/";
+        aux[0] = "/";
         int largo = aux.length;
-        String nombreDir = aux[largo-1];
+        String nombreDir = aux[largo - 1];
         return nombreDir;
     }
 
@@ -80,7 +103,7 @@ public class Directorios {
                     return raiz;
                 } else {
                     listaRuta = Arrays.copyOfRange(listaRuta, 1, listaRuta.length);
-                    String rutaNueva = reformarString(listaRuta, 0, listaRuta.length);
+                    String rutaNueva = reformarStringConSep(listaRuta, 0, listaRuta.length, "/");
                     return buscarDirectorio(raiz.getpH(), rutaNueva, 0);
                 }
             } else {
@@ -131,11 +154,10 @@ public class Directorios {
             return null;
         }
     }
-    
+
     public boolean existeDirectorio(String ruta) {
         Nodo<Directorio> nodo = buscarDirectorio(raiz, ruta, 1);
         return nodo != null;
     }
-    
-    
+
 }

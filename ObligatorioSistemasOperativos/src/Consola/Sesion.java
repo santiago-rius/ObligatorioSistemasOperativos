@@ -1,6 +1,5 @@
 package Consola;
 
-
 import FileSystem.Directorios;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +9,8 @@ import java.util.List;
  * @author evejo
  */
 public class Sesion {
-    List <Usuario> misUsuarios;
+
+    List<Usuario> misUsuarios;
     Usuario usuarioActual;
     String ruta;
     Directorios directorios;
@@ -18,19 +18,24 @@ public class Sesion {
 
     public Sesion() {
         misUsuarios = new ArrayList<>();
-        usuarioActual = new UsuarioEstandar("usuario no autenticado");
+        usuarioActual = new Usuario("visita");
         ruta = "/";
         directorios = new Directorios();
+        Usuario root = new Usuario("root");
+        root.setContraseña("root");
+        misUsuarios.add(root);
+        historialComandos = new ArrayList<>();
     }
-    
-    Usuario getUsuario(){
+
+    Usuario getUsuario() {
         return this.usuarioActual;
     }
-    void setUsuarioActual(Usuario usuarioA){
+
+    void setUsuarioActual(Usuario usuarioA) {
         this.usuarioActual = usuarioA;
     }
-    
-    public void setRuta(String rutaActual){
+
+    public void setRuta(String rutaActual) {
         this.ruta = rutaActual;
     }
 
@@ -41,8 +46,8 @@ public class Sesion {
     public void setDirectorios(Directorios directorios) {
         this.directorios = directorios;
     }
-    
-    public void agregarAMisUsuarios(Usuario u){
+
+    public void agregarAMisUsuarios(Usuario u) {
         this.misUsuarios.add(u);
     }
 
@@ -53,7 +58,7 @@ public class Sesion {
     public void setHistorialComandos(List<String> historialComandos) {
         this.historialComandos = historialComandos;
     }
-    
+
     /**
      *
      * @return el historial de comandos de la sesion ya pronto para mostrar
@@ -61,6 +66,7 @@ public class Sesion {
     public String getHistorialDeComandosPretty() {
         String historial = "";
         for (int i = 0; i < historialComandos.size(); i++) {
+            historial += "    " + (i + 1) + " ";
             historial += historialComandos.get(i);
             historial += "\n";
         }
