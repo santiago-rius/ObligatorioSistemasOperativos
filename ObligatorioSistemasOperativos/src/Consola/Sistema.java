@@ -3,8 +3,10 @@ package Consola;
 import ClasesAuxiliares.Nodo;
 import static ClasesAuxiliares.Utils.canRead;
 import static ClasesAuxiliares.Utils.canWrite;
+import static ClasesAuxiliares.Utils.convertirMascara;
 import FileSystem.Archivo;
 import FileSystem.Directorio;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -42,6 +44,16 @@ public class Sistema {
     public void comandos(String comandoInterfaz) {
         String[] comandos = dividirComponentes(comandoInterfaz);
         try {
+            if (comandoInterfaz.equals("apt -get moo") || comandoInterfaz.equals("moo")) {
+                System.out.println("         (__) \n"
+                        + "         (oo) \n"
+                        + "   /------\\/ \n"
+                        + "  / |    ||   \n"
+                        + " *  /\\---/\\ \n"
+                        + "    ~~   ~~   \n"
+                        + "....\"Have you mooed today?\"...");
+                return;
+            }
             switch (comandos[0]) {
                 case "useradd":
                     //useradd ​nombreUsuario
@@ -136,6 +148,9 @@ public class Sistema {
                 case "chmod":
                     asignarPermisos(comandos[1], comandos[2]);
                     break;
+                case "chown":
+                    cambiarPropietario(comandos[1], comandos[2]);
+                    break;
                 case "ls":
                     if (comandos[1].equals("-l")) {
                         if (comandos.length == 5 && comandos[2].equals("|") && comandos[3].equals("grep")) {
@@ -156,7 +171,7 @@ public class Sistema {
                     break;
 
                 default:
-                    System.out.println(comandoInterfaz + ": comando no encontrada");
+                    System.out.println(comandoInterfaz + ": comando no encontrado");
             }
         } catch (IndexOutOfBoundsException ex) {
             System.out.println("Uso incorrecto del comando '" + comandoInterfaz + "'");
@@ -183,7 +198,10 @@ public class Sistema {
             System.out.println("Ya existe el usuario '" + nombreUsuario + "'");
             return;
         }
-
+        if (nombreUsuario.equals("root") || nombreUsuario.equals("visita")) {
+            System.out.println("No puede crear un usuario con ese nombre");
+            return;
+        }
         System.out.print("Ingrese una contraseña: ");
         Scanner contraseñaUsuario = new Scanner(System.in);
         String contraseña = contraseñaUsuario.nextLine();
@@ -221,23 +239,27 @@ public class Sistema {
             System.out.println(PERMISOS_INSUFICIENTES_MSG);
             return;
         }
-        if (sesionActual.misUsuarios.contains(new Usuario(nombreUsuario))) { //aca busco en la supuesta lista de usuarios a ver si existe el pibito
-            System.out.print("Ingrese la nueva contraseña: ");
-            Scanner contraseñaUsuario = new Scanner(System.in);
-            String contraseña = contraseñaUsuario.nextLine();
+        if (sesionActual.getUsuario().equals(new Usuario(nombreUsuario))) {
+            if (sesionActual.misUsuarios.contains(new Usuario(nombreUsuario))) { //aca busco en la supuesta lista de usuarios a ver si existe el pibito
+                System.out.print("Ingrese la nueva contraseña: ");
+                Scanner contraseñaUsuario = new Scanner(System.in);
+                String contraseña = contraseñaUsuario.nextLine();
 
-            System.out.print("Ingrese la contraseña nuevamente: ");
-            Scanner contraseñaUsuario2 = new Scanner(System.in);
-            String contraseña2 = contraseñaUsuario2.nextLine();
+                System.out.print("Ingrese la contraseña nuevamente: ");
+                Scanner contraseñaUsuario2 = new Scanner(System.in);
+                String contraseña2 = contraseñaUsuario2.nextLine();
 
-            if (contraseña.equals(contraseña2)) {
-                sesionActual.usuarioActual.setContraseña(contraseña);
+                if (contraseña.equals(contraseña2)) {
+                    sesionActual.usuarioActual.setContraseña(contraseña);
+                } else {
+                    System.out.print("Las contraseñas no coinciden, vuelva a ingresarlas");
+                }
+
             } else {
-                System.out.print("Las contraseñas no coinciden, vuelva a ingresarlas");
+                System.out.println("Usuario no existente");
             }
-
         } else {
-            System.out.println("Usuario no existente");
+            System.out.println(PERMISOS_INSUFICIENTES_MSG);
         }
     }
 
@@ -255,6 +277,7 @@ public class Sistema {
         if (indice != -1) { // aca borro al pibito de la lista
             sesionActual.misUsuarios.remove(aux);
             System.out.println("Usuario " + nombreUsuario + " eliminado.");
+            sesionActual.setUsuarioActual(new Usuario("visita"));
         } else {
             System.out.println("Usuario " + nombreUsuario + " no encontrado.");
         }
@@ -284,7 +307,7 @@ public class Sistema {
         String[] comandos = splitEcho(comandoADividir);
         Nodo<Directorio> directorio = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), sesionActual.ruta, 1);
         Archivo aModificar = directorio.getDato().devolverArchivo(comandos[3]);
-        if (canWrite(sesionActual.usuarioActual, aModificar)) {
+        if (canWrite(sesionActual.usuarioActual, aModificar) || sesionActual.getUsuario().esAdmin()) {
             aModificar.agregarContenido(comandos[1]);
         } else {
             System.out.println(PERMISOS_INSUFICIENTES_MSG);
@@ -334,45 +357,78 @@ public class Sistema {
             System.out.println(PERMISOS_INSUFICIENTES_MSG);
             return;
         }
+        if (sesionActual.directorios.existeDirectorio(nombreDirectorio)) {
+            System.out.println("Directorio ya existente");
+            return;
+        }
         try {
             if (nombreDirectorio.startsWith("/")) {
                 if (sesionActual.directorios.agregarDirectorio(nombreDirectorio) == null) {
                     System.out.println("Imposible agregar, ruta no encontrada");
-                    return;
+                }
+            } else {
+                if (sesionActual.ruta.equals("/")) {
+                    sesionActual.directorios.agregarDirectorio(sesionActual.ruta + nombreDirectorio);
+                } else {
+                    String ruta = sesionActual.ruta + "/" + nombreDirectorio;
+                    sesionActual.directorios.agregarDirectorio(ruta);
                 }
             }
-            String ruta = sesionActual.ruta + "/" + nombreDirectorio;
-            sesionActual.directorios.agregarDirectorio(ruta);
         } catch (NullPointerException e) {
             System.out.println("Imposible agregar, ruta no encontrada");
         }
     }
 
-    void rmdir(String nombreDirectorio) { //FALTA PROBAR!
+    void rmdir(String nombreDirectorio) {
         if (sesionActual.getUsuario().esVisita()) {
             System.out.println(PERMISOS_INSUFICIENTES_MSG);
             return;
         }
         if (nombreDirectorio.startsWith("/")) {
+            if (sesionActual.ruta.equals(nombreDirectorio)) {
+                System.out.println(nombreDirectorio + DIRECTORIO_INEXISTENTE);
+                return;
+            }
             Nodo<Directorio> aBorrar = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), nombreDirectorio, 1);
             if (aBorrar == null) {
                 System.out.println(nombreDirectorio + DIRECTORIO_INEXISTENTE);
                 return;
             }
+            if (aBorrar.getpH() != null) {
+                System.out.println(nombreDirectorio + DIRECTORIO_INEXISTENTE);
+                return;
+            }
             sesionActual.directorios.eliminarDirectorio(nombreDirectorio);
+        } else {
+            String ruta = "";
+            if (sesionActual.ruta.equals("/")) {
+                ruta = sesionActual.ruta + nombreDirectorio;
+            } else {
+                ruta = sesionActual.ruta + "/" + nombreDirectorio;
+            }
+            Nodo<Directorio> aBorrar = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), ruta, 1);
+            if (aBorrar == null) {
+                System.out.println(ruta + DIRECTORIO_INEXISTENTE);
+                return;
+            }
+            if (aBorrar.getpH() != null) {
+                System.out.println(nombreDirectorio + DIRECTORIO_INEXISTENTE);
+                return;
+            }
+            sesionActual.directorios.eliminarDirectorio(ruta);
         }
-        String ruta = sesionActual.ruta + "/" + nombreDirectorio;
-        Nodo<Directorio> aBorrar = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), ruta, 1);
-        if (aBorrar == null) {
-            System.out.println(ruta + DIRECTORIO_INEXISTENTE);
-            return;
-        }
-        sesionActual.directorios.eliminarDirectorio(ruta);
     }
 
     public void cd(String ruta) {
-        if (sesionActual.directorios.existeDirectorio(ruta)) {
-            sesionActual.ruta = ruta;
+        if (ruta.startsWith("/")) {
+            if (sesionActual.directorios.existeDirectorio(ruta)) {
+                sesionActual.ruta = ruta;
+            } else {
+                System.out.println(ruta + DIRECTORIO_INEXISTENTE);
+            }
+        } else if (ruta.equals("..") && !sesionActual.ruta.equals("/")) {
+            String rutaP = sesionActual.directorios.rutaPadre(sesionActual.ruta);
+            sesionActual.ruta = rutaP;
         } else {
             System.out.println(ruta + DIRECTORIO_INEXISTENTE);
         }
@@ -418,20 +474,28 @@ public class Sistema {
         }
         Archivo copia = new Archivo(archivoACopiar.getNombre());
         copia.setMascara(archivoACopiar.getMascara());
-        copia.setContenido(archivoACopiar.getContenido());
-
+        List<String> nuevoContenido = new ArrayList<>();
+        copiarContenido(nuevoContenido, archivoACopiar.getContenido());
+        copia.setContenido(nuevoContenido);
+        copia.setPropietario(archivoACopiar.getPropietario());
         Nodo<Directorio> destino = sesionActual.directorios.buscarDirectorio(sesionActual.getDirectorios().getRaiz(), rutaDestino, 1);
         if (destino != null) {
             if (destino.getDato().contieneArchivo(copia)) {
                 System.out.println("Un archivo con nombre " + nombreArchivo + " ya existe en la ruta destino.");
                 return;
             }
-            Nodo<Directorio> directorioNuevo = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), rutaDestino, 1);
-            directorioNuevo.getDato().AgregarArchivo(archivoACopiar);
+            destino.getDato().AgregarArchivo(copia);
         } else {
             System.out.println("La ruta " + rutaDestino + " no existe");
         }
 
+    }
+
+    private void copiarContenido(List<String> nuevo, List<String> cont) {
+        for (String linea : cont) {
+            String copia = linea + "";
+            nuevo.add(copia);
+        }
     }
 
     public void cat(String nombreArchivo) {
@@ -449,7 +513,7 @@ public class Sistema {
             System.out.println("El archivo " + nombreArchivo + " no existe en " + sesionActual.ruta);
             return;
         }
-        if (canRead(sesionActual.usuarioActual, archivo)) {
+        if (canRead(sesionActual.usuarioActual, archivo) || sesionActual.getUsuario().esAdmin()) {
             List<String> contenido = archivo.getContenido();
             for (String linea : contenido) {
                 System.out.println(linea);
@@ -489,6 +553,9 @@ public class Sistema {
         }
         if (archivo.getPropietario().equals(sesionActual.getUsuario()) || sesionActual.getUsuario().esAdmin()) {
             try {
+                if (convertirMascara(mascara).equals("")) {
+                    System.out.println("Formato de mascara incorrecto");
+                }
                 archivo.setMascara(mascara);
             } catch (NumberFormatException ex) {
                 System.out.println("La mascara solo puede conener numeros");
@@ -535,7 +602,7 @@ public class Sistema {
             System.out.println("El archivo " + nombreArchivo + " no existe en " + sesionActual.ruta);
             return;
         }
-        if (canRead(sesionActual.usuarioActual, archivo)) {
+        if (canRead(sesionActual.usuarioActual, archivo) || sesionActual.getUsuario().esAdmin()) {
             List<String> contenido = archivo.getContenido();
             String contenidoFiltrado = "";
             for (String linea : contenido) {
@@ -559,6 +626,38 @@ public class Sistema {
             if (arch.getNombre().contains(textoABuscar)) {
                 System.out.println(arch.toString());
             }
+        }
+    }
+
+    private void cambiarPropietario(String usuario, String nombreArchivo) {
+        if (sesionActual.getUsuario().esVisita()) {
+            System.out.println(PERMISOS_INSUFICIENTES_MSG);
+            return;
+        }
+        Nodo<Directorio> directorioActual = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), sesionActual.ruta, 1);
+        if (directorioActual == null) {
+            System.out.println("ERROR: RUTA NO ENCONTRADA"); //nunca deberia pasar
+            return;
+        }
+        Archivo archivo = directorioActual.getDato().devolverArchivo(nombreArchivo);
+        if (archivo == null) {
+            System.out.println("Archivo " + nombreArchivo + " no encontrado.");
+            return;
+        }
+        if (!sesionActual.misUsuarios.contains(new Usuario(usuario))) {
+            System.out.println("No se encontro al usuario: " + usuario);
+            return;
+        }
+        Usuario u = null;
+        if (archivo.getPropietario().equals(sesionActual.getUsuario()) || sesionActual.getUsuario().esAdmin()) {
+            for (Usuario usr : sesionActual.misUsuarios) {
+                if(usr.getNombre().equals(usuario)) {
+                    u = usr;
+                }
+            }
+            archivo.setPropietario(u);
+        } else {
+            System.out.println(PERMISOS_INSUFICIENTES_MSG);
         }
     }
 }

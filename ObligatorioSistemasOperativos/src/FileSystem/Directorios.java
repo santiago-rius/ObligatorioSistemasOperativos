@@ -36,18 +36,18 @@ public class Directorios {
         this.raiz = raiz;
     }
 
-    private String rutaPadre(String ruta) {
+    public String rutaPadre(String ruta) {
         String rutaPadre;
         int posUltimo = 0;
         for (int i = 0; i < ruta.length(); i++) {
-            if(ruta.charAt(i) == '/') {
+            if (ruta.charAt(i) == '/') {
                 posUltimo = i;
             }
         }
-        if(posUltimo == 0) {
+        if (posUltimo == 0) {
             return "/";
         }
-        rutaPadre = ruta.substring(0, posUltimo+1);
+        rutaPadre = ruta.substring(0, posUltimo + 1);
         return rutaPadre;
     }
 
@@ -79,10 +79,16 @@ public class Directorios {
 
     private String obtenerNombre(String ruta) {
         String[] aux = ruta.split("/");
-        aux[0] = "/";
-        int largo = aux.length;
-        String nombreDir = aux[largo - 1];
-        return nombreDir;
+        if (aux.length > 0) {
+            aux[0] = "/";
+            int largo = aux.length;
+            String nombreDir = aux[largo - 1];
+            return nombreDir;
+        } else if(ruta.equals("/")) {
+            return ruta;
+        } else {
+            throw new IndexOutOfBoundsException();
+        }
     }
 
     public Nodo<Directorio> buscarDirectorio(Nodo<Directorio> raiz, String ruta, int primeraVez) {
@@ -131,23 +137,33 @@ public class Directorios {
         String rutaPadre = rutaPadre(ruta);
         Nodo<Directorio> padre = buscarDirectorio(raiz, rutaPadre, 1);
         String rutaNombre = obtenerNombre(ruta);
-        padre.setpH(eliminarDirectorioAux(padre.getpH(), rutaNombre));
+        if(padre.getpH() != null && rutaNombre.equals(padre.getpH().getDato().nombre)) {
+            padre.setpH(padre.getpH().getsH());
+        }
+        eliminarDirectorioAux(padre.getpH(), rutaNombre);
     }
 
     private Nodo<Directorio> eliminarDirectorioAux(Nodo<Directorio> nodo, String nombreDirABorrar) {
         if (nodo != null) {
-            if (nombreDirABorrar.equals("")) {
-                eliminarDirectorioAux(nodo.getpH(), "");
-                eliminarDirectorioAux(nodo.getsH(), "");
-                nodo.getDato().listaArchivos.clear();
+            if (nombreDirABorrar.equals("/")) {
+                
                 return null;
             } else {
-                if (nombreDirABorrar.equals(nodo.getDato().getNombre())) {
-                    nodo = nodo.getsH();
-                    System.gc();
-                    return nodo;
+                if (nodo.getsH() != null) {
+                    if (nombreDirABorrar.equals(nodo.getsH().getDato().getNombre())) {
+                        nodo.setsH(nodo.getsH().getsH());
+                        return nodo;
+                    } else {
+                        return eliminarDirectorioAux(nodo.getsH(), nombreDirABorrar);
+                    }
                 } else {
-                    return eliminarDirectorioAux(nodo.getsH(), nombreDirABorrar);
+                    if (nombreDirABorrar.equals(nodo.getDato().getNombre())) {
+                        nodo = nodo.getsH();
+                        System.gc();
+                        return nodo;
+                    } else {
+                        return eliminarDirectorioAux(nodo.getsH(), nombreDirABorrar);
+                    }
                 }
             }
         } else {
