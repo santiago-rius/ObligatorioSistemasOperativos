@@ -20,7 +20,7 @@ public class Directorios {
         raiz = new Nodo<>(new Directorio("/"), null, null);
     }
 
-    public Nodo<Directorio> agregarDirectorio(String ruta) { //Mkdir -- falta verificacion
+    public Nodo<Directorio> agregarDirectorio(String ruta) { //Mkdir
         String rutaPadre = rutaPadre(ruta);
         String nombreDir = obtenerNombre(ruta);
         Nodo<Directorio> nodoPadre = buscarDirectorio(raiz, rutaPadre, 1);

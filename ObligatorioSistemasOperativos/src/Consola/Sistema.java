@@ -240,7 +240,7 @@ public class Sistema {
             return;
         }
         if (sesionActual.getUsuario().equals(new Usuario(nombreUsuario))) {
-            if (sesionActual.misUsuarios.contains(new Usuario(nombreUsuario))) { //aca busco en la supuesta lista de usuarios a ver si existe el pibito
+            if (sesionActual.misUsuarios.contains(new Usuario(nombreUsuario))) {
                 System.out.print("Ingrese la nueva contraseña: ");
                 Scanner contraseñaUsuario = new Scanner(System.in);
                 String contraseña = contraseñaUsuario.nextLine();
@@ -345,7 +345,6 @@ public class Sistema {
                 System.out.println("Contraseña incorrecta");
             }
         }
-        //acordarse hacer que el equals busque por nombre de usuario
     }
 
     public void pwd() {
@@ -439,10 +438,16 @@ public class Sistema {
             System.out.println(PERMISOS_INSUFICIENTES_MSG);
             return;
         }
-        if (!sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), rutaDestino, 0).getDato().contieneArchivo(nombreArchivo)) {
+        Nodo<Directorio> dirDestino = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), rutaDestino, 1);
+        if (dirDestino != null && !dirDestino.getDato().contieneArchivo(nombreArchivo)) {
             Nodo<Directorio> directorioActual = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), sesionActual.ruta, 1);
             if (directorioActual == null) {
                 System.out.println("ERROR: RUTA NO ENCONTRADA"); //nunca deberia pasar
+                return;
+            }
+            Archivo archivo = directorioActual.getDato().devolverArchivo(nombreArchivo);
+            if (!sesionActual.getUsuario().esAdmin() && !canWrite(sesionActual.getUsuario(), archivo)) {
+                System.out.println(PERMISOS_INSUFICIENTES_MSG);
                 return;
             }
             Archivo archivoAMover = directorioActual.getDato().borrarYDevolverArchivo(nombreArchivo);
@@ -450,6 +455,8 @@ public class Sistema {
                 Nodo<Directorio> directorioNuevo = sesionActual.directorios.buscarDirectorio(sesionActual.directorios.getRaiz(), rutaDestino, 1);
                 directorioNuevo.getDato().AgregarArchivo(archivoAMover);
             }
+        } else {
+            System.out.println("La ruta " + rutaDestino + " no existe");
         }
     }
 
@@ -651,7 +658,7 @@ public class Sistema {
         Usuario u = null;
         if (archivo.getPropietario().equals(sesionActual.getUsuario()) || sesionActual.getUsuario().esAdmin()) {
             for (Usuario usr : sesionActual.misUsuarios) {
-                if(usr.getNombre().equals(usuario)) {
+                if (usr.getNombre().equals(usuario)) {
                     u = usr;
                 }
             }
